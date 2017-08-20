@@ -46,12 +46,12 @@ public class ContentReader {
      * @param slice the number of the slice
      * @return a String representation of a byte array representing the slice
      */
-    public String getPageSlice(String url,int slice){
+    public byte[] getPageSlice(String url,int slice){
         Result<Slice> res = contentAccessor.getPartByUrlAndPartNumber(url,slice);
         List<Slice> resultList=res.all();
         if(resultList.size()>1){
             return null;
         }
-        return resultList.get(0).getData().array().toString();
+        return resultList.get(0).getData().array();
     }
 }

@@ -27,7 +27,7 @@ public class start {
                     if(argv.length>3){
                         client.createMapping();
                         PageDownloader pagedownloader = new PageDownloader(client);
-                        pagedownloader.DownloadAndStorePages(Arrays.copyOfRange(argv,3,argv.length));
+                        pagedownloader.downloadAndStorePages(Arrays.copyOfRange(argv,3,argv.length));
                     }
                     else{
                         printOnError("error: invalid number of arguments");
@@ -44,10 +44,10 @@ public class start {
                     }
                     break;
                 case "readSlice":
-                    if(argv.length==4){
+                    if(argv.length==5){
                         client.createMapping();
                         ContentReader content = new ContentReader(client);
-                        System.out.println(content.getPageSlice(argv[3],Integer.parseInt(argv[4])));
+                        System.out.println(Arrays.toString(content.getPageSlice(argv[3],Integer.parseInt(argv[4]))));
                     }
                     else{
                         printOnError("error: invalid number of arguments");

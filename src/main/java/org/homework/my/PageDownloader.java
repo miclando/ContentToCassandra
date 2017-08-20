@@ -26,53 +26,55 @@ public class PageDownloader {
         this.client=client;
     }
 
-    public List<byte[]> DownloadAndStorePages(String ... urls) throws IOException {
-        URL url;
+    /**
+     * the method downloads and stores the pages
+     * @param urls a list of the urls we want to download
+     * @throws IOException thrwes an exception incase
+     */
+    public void downloadAndStorePages(String ... urls) throws IOException {
+
+        for(String address: urls){
+           downloadAndStore(address);
+        }
+    }
+
+    /**
+     * the method downloads and stores a single page
+     * @param address address of a page to download
+     * @throws IOException
+     */
+    public void downloadAndStore(String address) throws IOException{
         InputStream is = null;
         BufferedInputStream br;
-        String line;
         int size=0;
         int tenkb=1024*10;
         byte [] bytes=new byte[tenkb];
         List<byte []> input=new ArrayList<byte []>();
-        for(String address: urls){
-            try {
-
-                //temp
-                File output= new File(System.getProperty("user.dir")+File.separator+"output");
-                Files.deleteIfExists(output.toPath());
-                URL oracle = new URL(addProtocol(address));
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(oracle.openStream()));
-
-                String inputLine;
-                while ((inputLine = in.readLine()) != null) {
-                    Files.write(output.toPath(), inputLine.getBytes(), StandardOpenOption.CREATE,StandardOpenOption.APPEND);
+        try {
+            URL  url = new URL(addProtocol(address));
+            is = url.openStream();
+            br = new BufferedInputStream(is,tenkb);
+            while ( ( size = br.read(bytes)) !=-1){
+                if(size <= tenkb){
+                    bytes= Arrays.copyOfRange(bytes,0,size);
                 }
-                in.close();
-
-
-                //temp end
-                url = new URL(addProtocol(address));
-                is = url.openStream();  // throws an IOException
-                br = new BufferedInputStream(is,tenkb);
-                while ( ( size = br.read(bytes)) !=-1){
-//                    if(size <= tenkb){
-//                        bytes= Arrays.copyOfRange(bytes,0,size);
-//                    }
-                    input.add(bytes);
-                    bytes=new byte[tenkb];
-                }
-            } finally {
-                if (is != null){
-                    is.close();
-                }
+                input.add(bytes);
+                bytes=new byte[tenkb];
             }
-            storePage(input, address);
+        } finally {
+            if (is != null){
+                is.close();
+            }
         }
-        return input;
+        storePage(input, address);
     }
 
+
+    /**
+     * the method adds a default http protocol to URLS that were provided with out it
+     * @param url
+     * @return
+     */
     private String addProtocol(String url){
         if(url.toLowerCase().startsWith("http://") || url.toLowerCase().startsWith("https://") ){
             return url;
@@ -83,12 +85,21 @@ public class PageDownloader {
         }
     }
 
+    /**
+     * the method stores the read bytes according to the urle they were read from.
+     * @param input a list of byte arrays
+     * @param address the adress where the byte arayes were read.
+     */
     private void storePage(List<byte[]> input, String address) {
+        System.out.println("deleting all recordes for address:"+address+" if they exist");
+        client.delete(address);
         int slice=0;
+        System.out.println("Saving slices for:"+address);
         for(byte [] data: input){
             client.save(new Slice(address,slice, data));
             slice++;
         }
+        System.out.println("Saving slices for:"+address+" completed sucsesfully slices created:"+slice);
     }
 
     private void print(List<byte[]> input) {

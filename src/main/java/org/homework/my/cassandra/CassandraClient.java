@@ -3,6 +3,9 @@ package org.homework.my.cassandra;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.querybuilder.Delete;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.schemabuilder.SchemaBuilder;
 import com.datastax.driver.core.schemabuilder.SchemaStatement;
 import com.datastax.driver.mapping.Mapper;
@@ -72,7 +75,7 @@ public class CassandraClient {
     }
 
     /**
-     * the method closes the client conection to the c*
+     * the method closes the client connection to the c*
      */
     public void close(){
         if(cluster!=null){
@@ -95,6 +98,11 @@ public class CassandraClient {
      */
     public void save(Slice slice){
         mapper.save(slice);
+    }
+
+    public void delete(String url){
+        Statement statment = QueryBuilder.delete().from(Constants.KEYSPACE.getName(), Constants.TABLE.getName()).where(QueryBuilder.eq("url", url));
+        session.execute(statment);
     }
 
     /**

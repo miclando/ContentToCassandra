@@ -17,13 +17,13 @@ to exacute the aplication run
 
     java -jar ContentToCassandra-1.0-SNAPSHOT-jar-with-dependencies.jar 
 
-### aplication options:
+### Aplication options:
 
-#### download from web sites:
+#### Download from web sites:
     <cassandra ip> <cassandra port> download <urls seperated by space>
-#### read whole site data from DB:
+#### Read whole site data from DB:
     <cassandra ip> <cassandra port> readFull <site url>
-#### read site slice data from DB:
+#### Read site slice data from DB:
     <cassandra ip> <cassandra port> readSlice <site url> <slice number>
-#### clear DB:
+#### Clear DB:
     <cassandra ip> <cassandra port> clear <site url> <slice number>
